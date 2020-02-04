@@ -3,6 +3,8 @@ declare -A board
 echo "-------WELCOME TO TIC TAC TOE-------"
 ROWS=3
 COLUMNS=3
+PLAYER=1
+COMPUTER=0
 check=$((RANDOM%2))
 
 function displayBoard(){
@@ -14,7 +16,7 @@ board[$i,$j]=""
 }
 
 function assigned(){
-if [ $check -eq 1 ]
+if [ $check -eq $PLAYER ]
 then
 	player="X"
 	computer="O"
@@ -24,5 +26,16 @@ else
 fi
 }
 
+function toss(){
+if [ $check -eq $PLAYER ]
+then
+echo PLAYER has won Toss
+else
+echo COMPUTER has won Toss
+fi
+}
+
+
 displayBoard
 assigned
+toss
