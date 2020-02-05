@@ -1,4 +1,4 @@
-#!/bin/bash -x 
+##!/bin/bash -x 
 declare -A board
 echo "-------WELCOME TO TIC TAC TOE-------"
 ROWS=3
@@ -10,7 +10,7 @@ check=$((RANDOM%2))
 function resetBoard(){
 for ((i=1;i<=$ROWS;i++)){
 for ((j=1;j<=$COLUMNS;j++)){
-board[$i,$j]=""
+	board[$i,$j]=" "
 }
 }
 }
@@ -29,20 +29,34 @@ fi
 function toss(){
 if [ $check -eq $PLAYER ]
 then
-echo PLAYER has won Toss
+	echo PLAYER has won Toss
 else
-echo COMPUTER has won Toss
+	echo COMPUTER has won Toss
 fi
 }
 
 function displayBoard(){
-echo "|$board[0][0]|$board[0][1]|$board[0][2]|"
-echo "|$board[1][0]|$board[1][1]|$board[1][2]|"
-echo "|$board[2][0]|$board[2][1]|$board[2][2]|"
+	for (( i=0; i<$ROWS; i++ ))
+	do
+			echo "-------------"
+			for (( j=0; j<$COLUMNS; j++ ))
+		do
+			echo -n  "| ${board[$i,$j]} "
+		done
+		echo "|"
+	done
+				echo "-------------"
 }
 
 
+
+function checkWinORTiePlayer()
+{
+read -p "Enter the row for position" row
+read -p "Enter the column for position" column
+}
+
 displayBoard
-resetBoard
-assigned
-toss
+#resetBoard
+#assigned
+#toss
