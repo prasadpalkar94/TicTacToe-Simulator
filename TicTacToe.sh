@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -x 
 declare -A board
 echo "-------WELCOME TO TIC TAC TOE-------"
 ROWS=3
@@ -7,7 +7,7 @@ PLAYER=1
 COMPUTER=0
 check=$((RANDOM%2))
 
-function displayBoard(){
+function resetBoard(){
 for ((i=1;i<=$ROWS;i++)){
 for ((j=1;j<=$COLUMNS;j++)){
 board[$i,$j]=""
@@ -35,7 +35,14 @@ echo COMPUTER has won Toss
 fi
 }
 
+function displayBoard(){
+echo "|$board[0][0]|$board[0][1]|$board[0][2]|"
+echo "|$board[1][0]|$board[1][1]|$board[1][2]|"
+echo "|$board[2][0]|$board[2][1]|$board[2][2]|"
+}
+
 
 displayBoard
+resetBoard
 assigned
 toss
