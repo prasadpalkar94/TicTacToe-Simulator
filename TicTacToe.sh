@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/bash 
+>>>>>>> master
 declare -A board
 echo "-------WELCOME TO TIC TAC TOE-------"
-TOTALMOVE=9
 ROWS=3
 COLUMNS=3
 PLAYER=1
-COMPUTER=0
+TOTALCOUNT=9
 check=$((RANDOM%2))
-movecount=0
+movecount=1
 
 function resetBoard(){
 	for ((i=0;i<$ROWS;i++))
@@ -19,55 +19,56 @@ function resetBoard(){
 	done
 }
 
-function assigned(){
-if [ $check -eq $PLAYER ]
-then
-	player="X"
-else
-	player="O"
-
-fi
-echo player $player assigned
+function assignSymbol(){
+	if [ $check -eq $PLAYER ]
+	then
+		player="X"
+	else
+		player="O"
+	fi
+	echo player $player assigned
 }
 
 function toss(){
-if [ $check -eq $PLAYER ]
-then
-	echo PLAYER has won Toss
-else
-	echo COMPUTER has won Toss
-fi
+	if [ $check -eq $PLAYER ]
+	then
+		echo PLAYER $player has won Toss
+	else
+		echo PLAYER $player has won Toss
+	fi
 }
 
 function displayBoard(){
+	echo "----------"
 	for (( i=0; i<$ROWS; i++ ))
 	do
-			echo "-------------"
 		for (( j=0; j<$COLUMNS; j++ ))
 		do
-			echo -n  "| ${board[$i,$j]} "
+			echo -n "| ${board[$i,$j]} "
 		done
 			echo "|"
+			echo "----------"
 	done
-				echo "-------------"
 }
 
 function checkEmptyCell(){
-	read -p "Enter row and column position" row column
+	read -p "Enter row" row
+	read -p "Enter column" column
 	if [[ ${board[$row,$column]} == "-" ]]
 	then
 		board[$row,$column]=$player
 		((movecount++))
 		displayBoard
 	else
-		echo "Position Occupied OR Invalid Position"
+		echo "Position Occupied Or Invalid Position"
 	fi
-#checkEmptyCell
 }
+
+assignSymbol
 resetBoard
-assigned
-while [ $movecount -lt $TOTALMOVE ]
+while [[ $movecount -lt $TOTALCOUNT ]]
 do
-checkEmptyCell
+	checkEmptyCell
 done
+
 
