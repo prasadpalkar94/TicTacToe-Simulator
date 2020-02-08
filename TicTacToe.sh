@@ -62,11 +62,43 @@ function checkEmptyCell(){
 	fi
 }
 
+function checkWin(){
+for ((i=0;i<ROWS;i++))
+do
+for ((j=0;j<COLUMNS;j++))
+do
+	checkHorizontal=${board[$i,$j]}${board[$i,$((j+1))]}${board[$i,$((j+2))]}
+	if [[ $checkHorizontal == "$player$player$player" ]]
+	then
+  		echo "You Won Horizontically!!"
+		exit
+	fi
+
+	checkVertical=${board[$j,$i]}${board[$((j+1)),$i]}${board[$((j+2)),$i]}
+	if [[ $checkVertical == "$player$player$player" ]]
+	then
+		echo "You Won Vertically!!"
+      exit
+   fi
+
+
+	if [[ ${board[$i,$j]}${board[$((i+1)),$((j+1))]}${board[$((i+2)),$((j+2))]} == "$player$player$player" ]] || [[ ${board[$i,$((j+2))]}${board[$((i+1)),$((j+1))]}${board[$((i+2)),$j]} == "$player$player$player" ]]
+   then
+		echo "You Won Diagonally!!"
+		exit
+	fi
+done 
+done
+}
+
+
+
 assignSymbol
 resetBoard
 while [[ $movecount -lt $TOTALCOUNT ]]
 do
 	checkEmptyCell
+	checkWin
 done
 
 
