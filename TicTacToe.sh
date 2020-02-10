@@ -1,12 +1,12 @@
-#!/bin/bash 
+#! /bin/bash  
 declare -A board
 echo "-------WELCOME TO TIC TAC TOE-------"
 ROWS=3
 COLUMNS=3
 PLAYER=1
-TOTALCOUNT=9
+TOTALCOUNT=8
 check=$((RANDOM%2))
-movecount=1
+movecount=0
 function resetBoard(){
 	for ((i=0;i<$ROWS;i++))
 	do
@@ -21,18 +21,21 @@ function assignSymbol(){
 	if [ $check -eq $PLAYER ]
 	then
 		player="X"
+		computer="O"
 	else
 		player="O"
+		computer="X"
 	fi
-	echo player $player assigned
+		echo Player $player Assigned.
+		echo Computer $computer Assigned.
 }
 
 function toss(){
 	if [ $check -eq $PLAYER ]
 	then
-		echo PLAYER $player has won Toss
+		echo Player $player has won Toss
 	else
-		echo PLAYER $player has won Toss
+		echo Computer $computer has won Toss
 	fi
 }
 
@@ -55,50 +58,110 @@ function checkEmptyCell(){
 	if [[ ${board[$row,$column]} == "-" ]]
 	then
 		board[$row,$column]=$player
+		board[$row,$column]=$computer
 		((movecount++))
 		displayBoard
 	else
-		echo "Position Occupied Or Invalid Position"
+		echo "1.Position Occupied Or Invalid Position"
 	fi
 }
 
 function checkWin(){
 for ((i=0;i<ROWS;i++))
 do
-for ((j=0;j<COLUMNS;j++))
-do
-	checkHorizontal=${board[$i,$j]}${board[$i,$((j+1))]}${board[$i,$((j+2))]}
-	if [[ $checkHorizontal == "$player$player$player" ]]
-	then
-  		echo "You Won Horizontically!!"
-		exit
-	fi
+	for ((j=0;j<COLUMNS;j++))
+	do
+		checkHorizontal=${board[$i,$j]}${board[$i,$(($j+1))]}${board[$i,$(($j+2))]}
+			if [[ $checkHorizontal == "$player$player$player" ]]
+			then
+  				echo "You Won Horizontically!!"
+				exit
+			elif [[ $checkHorizontal == "$computer$computer$computer" ]]
+			then
+				echo "Computer Won Horizontically!!"
+				exit
+			fi
 
-	checkVertical=${board[$j,$i]}${board[$((j+1)),$i]}${board[$((j+2)),$i]}
-	if [[ $checkVertical == "$player$player$player" ]]
-	then
-		echo "You Won Vertically!!"
-      exit
-   fi
+		checkVertical=${board[$j,$i]}${board[$(($j+1)),$i]}${board[$(($j+2)),$i]}
+			if [[ $checkVertical == "$player$player$player" ]]
+			then
+				echo "You Won Vertically!!"
+				exit
+			elif [[ $checkVertical == "$computer$computer$computer" ]]
+			then
+				echo "Computer Won Vertically!!"
+      		exit
+   		fi
 
-
-	if [[ ${board[$i,$j]}${board[$((i+1)),$((j+1))]}${board[$((i+2)),$((j+2))]} == "$player$player$player" ]] || [[ ${board[$i,$((j+2))]}${board[$((i+1)),$((j+1))]}${board[$((i+2)),$j]} == "$player$player$player" ]]
-   then
-		echo "You Won Diagonally!!"
-		exit
-	fi
-done 
+		firstDiagonal=${board[$i,$j]}${board[$(($i+1)),$(($j+1))]}${board[$(($i+2)),$(($j+2))]} 
+		secondDiagonal=${board[$i,$(($j+2))]}${board[$(($i+1)),$(($j+1))]}${board[$(($i+2)),$j]}
+			if [[ $firstDiagonal == "$player$player$player" ]] || [[ $secondDiagonal == "$player$player$player" ]]
+   		then
+				echo "You Won Diagonally!!"
+				exit
+			elif [[ $firstDiagonal == "$computer$computer$computer" ]] || [[ $secondDiagonal == "$computer$computer$computer" ]]
+			then
+				echo "Computer Won Diagonally!!"
+				exit
+			fi
+	done 
 done
+}
+
+function tieGame(){
+if [[ $movecount -eq $TOTALCOUNT ]]
+then  
+      echo "Match Tie!!"
+      exit
+fi
+}
+
+function userTurn(){
+	read -p "Enter row" row
+	read -p "Enter column" column
+		if [[ ${board[$row,$column]} == "-" ]]
+		then
+			board[$row,$column]=$player
+			((movecount++))
+			echo $movecount
+			displayBoard
+			checkWin			
+			computerTurn
+		else
+			echo "Position Occupied Or Invalid Position For User!!"
+			tieGame
+			userTurn
+		fi
+}
+
+function computerTurn(){
+	row=$((RANDOM%3))
+	column=$((RANDOM%3))
+		if [[ ${board[$row,$column]} == "-" ]]
+		then
+			board[$row,$column]=$computer
+			((movecount++))
+			displayBoard
+			checkWin
+			userTurn
+		else
+			echo "Position Occupied Or Invalid Position For Computer!!"	
+			tieGame
+			computerTurn
+			break
+		fi
 }
 
 
 
 assignSymbol
 resetBoard
-while [[ $movecount -lt $TOTALCOUNT ]]
+while [[ $movecount -ne $TOTALCOUNT ]]
 do
-	checkEmptyCell
-	checkWin
+	computerTurn
 done
-
+#if [[ $movecount -eq $TOTALCOUNT ]]
+#then
+#      echo "Match Tie!!"
+#fi
 
