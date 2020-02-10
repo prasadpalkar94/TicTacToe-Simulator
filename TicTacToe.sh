@@ -143,6 +143,7 @@ function computerTurn(){
 			((movecount++))
 			displayBoard
 			checkWin
+			computerWinCheck
 			userTurn
 		else
 			echo "Position Occupied Or Invalid Position For Computer!!"	
@@ -152,7 +153,58 @@ function computerTurn(){
 		fi
 }
 
-
+function computerWinCheck(){
+for ((i=0;i<ROWS;i++))
+do
+	for ((j=0;j<COLUMNS;j++))
+	do
+#-----horizontal---
+		if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == $computer ]]
+		then 
+ 			board[$i,$j]=$computer
+		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $computer ]]
+		then 
+ 			board[$i,$(($j+1))]=$computer
+		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == "-" ]]
+		then 
+ 			board[$i,$(($j+2))]=$computer
+		fi
+#------Vertical-----
+		if [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == $computer ]]
+		then
+			board[$j,$i]=$computer
+		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $computer ]]
+		then 
+			board[$(($j+1)),$i]=$computer
+		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == "-" ]]
+		then 
+			board[$(($j+2)),$i]=$computer
+		fi
+#-----1st--diagonal----
+		if [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
+		then 
+			board[$i,$j]=$computer
+		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
+		then 
+			board[$(($i+1)),$(($j+1))]=$computer
+		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
+		then 
+			board[$(($i+2)),$(($j+2))]=$computer
+		fi
+#--------2nd diagonal---
+		if [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == $computer ]]
+		then 
+			board[$i,$(($j+2))]=$computer
+		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $computer ]]
+		then 
+			board[$(($i+1)),$(($j+1))]=$computer
+		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == "-" ]]
+		then 
+			board[$(($i+2)),$j]=$computer
+		fi
+	done
+done
+}
 
 assignSymbol
 resetBoard
@@ -160,8 +212,5 @@ while [[ $movecount -ne $TOTALCOUNT ]]
 do
 	computerTurn
 done
-#if [[ $movecount -eq $TOTALCOUNT ]]
-#then
-#      echo "Match Tie!!"
-#fi
+
 
