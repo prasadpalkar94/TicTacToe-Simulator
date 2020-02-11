@@ -7,6 +7,8 @@ PLAYER=1
 TOTALCOUNT=8
 check=$((RANDOM%2))
 movecount=0
+block=0
+
 function resetBoard(){
 	for ((i=0;i<$ROWS;i++))
 	do
@@ -58,7 +60,6 @@ function checkEmptyCell(){
 	if [[ ${board[$row,$column]} == "-" ]]
 	then
 		board[$row,$column]=$player
-		board[$row,$column]=$computer
 		((movecount++))
 		displayBoard
 	else
@@ -125,7 +126,8 @@ function userTurn(){
 			((movecount++))
 			echo $movecount
 			displayBoard
-			checkWin			
+			checkWin
+			flag=0
 			computerTurn
 		else
 			echo "Position Occupied Or Invalid Position For User!!"
@@ -135,6 +137,21 @@ function userTurn(){
 }
 
 function computerTurn(){
+flag=0
+checkWin
+#computerWinCheck
+if [[ $block -ne 1  ]]
+then
+computerBlockCheck
+displayBoard
+fi
+if [[ $block == 2 ]]
+then
+flag=1
+userTurn
+fi
+if [[ $flag == 0 ]]
+then
 	row=$((RANDOM%3))
 	column=$((RANDOM%3))
 		if [[ ${board[$row,$column]} == "-" ]]
@@ -142,15 +159,20 @@ function computerTurn(){
 			board[$row,$column]=$computer
 			((movecount++))
 			displayBoard
-			checkWin
-			computerWinCheck
 			userTurn
 		else
 			echo "Position Occupied Or Invalid Position For Computer!!"	
 			tieGame
 			computerTurn
-			break
 		fi
+fi
+
+}
+
+function win(){
+displayBoard
+echo "Computer Won!!"
+exit
 }
 
 function computerWinCheck(){
@@ -162,49 +184,167 @@ do
 		if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == $computer ]]
 		then 
  			board[$i,$j]=$computer
+			block=1
+			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $computer ]]
 		then 
  			board[$i,$(($j+1))]=$computer
+			block=1
+			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == "-" ]]
 		then 
  			board[$i,$(($j+2))]=$computer
+			block=1
+			break
 		fi
 #------Vertical-----
 		if [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == $computer ]]
 		then
 			board[$j,$i]=$computer
+			block=1
+			break
 		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $computer ]]
 		then 
 			board[$(($j+1)),$i]=$computer
+			block=1
+			break
 		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == "-" ]]
 		then 
 			board[$(($j+2)),$i]=$computer
+			block=1
+			break
 		fi
 #-----1st--diagonal----
 		if [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
 		then 
 			board[$i,$j]=$computer
+			block=1
+			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
 		then 
 			board[$(($i+1)),$(($j+1))]=$computer
+			block=1
+			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
 		then 
 			board[$(($i+2)),$(($j+2))]=$computer
+			block=1
+			break
 		fi
 #--------2nd diagonal---
 		if [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == $computer ]]
 		then 
 			board[$i,$(($j+2))]=$computer
+			block=1
+			break
 		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $computer ]]
 		then 
 			board[$(($i+1)),$(($j+1))]=$computer
+			block=1
+			break
 		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == "-" ]]
 		then 
 			board[$(($i+2)),$j]=$computer
+			block=1
+			break
 		fi
 	done
+if [ $block -eq 1 ]
+then 
+break
+fi
 done
+checkWin
+if [ $block -eq 1 ]
+then
+win
+fi
 }
+
+function computerBlockCheck(){
+for ((i=0;i<ROWS;i++))
+do
+	for ((j=0;j<COLUMNS;j++))
+	do
+#-----horizontal---
+		if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $player && ${board[$i,$(($j+2))]} == $player ]]
+		then 
+			board[$i,$j]=$computer
+			block=2
+			break
+		elif [[ ${board[$i,$j]} == $player && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $player ]]
+		then 
+			board[$i,$(($j+1))]=$computer
+			block=2
+			break
+		elif [[ ${board[$i,$j]} == $player && ${board[$i,$(($j+1))]} == $player && ${board[$i,$(($j+2))]} == "-" ]]
+		then 
+			board[$i,$(($j+2))]=$computer
+			block=2
+			break
+		fi
+#------Vertical-----
+		if [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $player && ${board[$(($j+2)),$i]} == $player ]]
+		then
+			board[$j,$i]=$computer
+			block=2
+			break
+		elif [[ ${board[$j,$i]} == $player && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $player ]]
+		then 
+			board[$(($j+1)),$i]=$computer
+			block=2
+			break
+		elif [[ ${board[$j,$i]} == $player && ${board[$(($j+1)),$i]} == $player && ${board[$(($j+2)),$i]} == "-" ]]
+		then 
+			board[$(($j+2)),$i]=$computer
+			block=2
+			break
+		fi
+#-----1st--diagonal----
+		if [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$(($j+2))]} == $player ]]
+		then 
+			board[$i,$j]=$computer
+			block=2
+			break
+		elif [[ ${board[$i,$j]} == $player && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $player ]]
+		then 
+			board[$(($i+1)),$(($j+1))]=$computer
+			block=2
+			break
+		elif [[ ${board[$i,$j]} == $player && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
+		then 
+			board[$(($i+2)),$(($j+2))]=$computer
+			block=2
+			break
+		fi
+#--------2nd diagonal---
+		if [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$j]} == $player ]]
+		then 
+			board[$i,$(($j+2))]=$computer
+			block=2
+			break
+		elif [[ ${board[$i,$(($j+2))]} == $player && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $player ]]
+		then 
+			board[$(($i+1)),$(($j+1))]=$computer
+			block=2
+			break
+		elif [[ ${board[$i,$(($j+2))]} == $player && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$j]} == "-" ]]
+		then 
+			board[$(($i+2)),$j]=$computer
+			block=2
+			break
+		fi
+	done
+if [ $block -eq 2 ]
+then 
+break
+fi
+done
+checkWin
+}
+
+
+
 
 assignSymbol
 resetBoard
