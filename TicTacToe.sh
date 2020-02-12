@@ -142,6 +142,7 @@ computerWinCheck
 if [[ $block -eq 0  ]]
 then
 computerBlockCheck
+forCorners
 fi
 if [[ $block -eq 0 ]]
 then
@@ -293,7 +294,21 @@ do
 done
 }
 
-
+function forCorners(){
+block=0
+	for (( i=0; i<$ROWS; i=$(($i+2)) ))
+	do
+		for (( j=0; j<$COLUMNS; j=$(($j+2)) ))
+		do
+			if [[ ${board[$i,$j]} == "-" ]]
+			then
+				board[$i,$j]=$computer
+				block=1
+			return
+			fi
+		done
+	done
+}
 
 
 assignSymbol
