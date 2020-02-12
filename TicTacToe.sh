@@ -4,7 +4,7 @@ echo "-------WELCOME TO TIC TAC TOE-------"
 ROWS=3
 COLUMNS=3
 PLAYER=1
-TOTALCOUNT=8
+TOTALCOUNT=9
 check=$((RANDOM%2))
 movecount=0
 block=0
@@ -137,45 +137,33 @@ function userTurn(){
 }
 
 function computerTurn(){
-flag=0
-checkWin
-#computerWinCheck
-if [[ $block -ne 1  ]]
+#checkWin
+computerWinCheck
+if [[ $block -eq 0  ]]
 then
 computerBlockCheck
-displayBoard
 fi
-if [[ $block == 2 ]]
-then
-flag=1
-userTurn
-fi
-if [[ $flag == 0 ]]
+if [[ $block -eq 0 ]]
 then
 	row=$((RANDOM%3))
 	column=$((RANDOM%3))
 		if [[ ${board[$row,$column]} == "-" ]]
 		then
 			board[$row,$column]=$computer
-			((movecount++))
-			displayBoard
-			userTurn
 		else
 			echo "Position Occupied Or Invalid Position For Computer!!"	
-			tieGame
 			computerTurn
 		fi
 fi
-
-}
-
-function win(){
+((movecount++))
 displayBoard
-echo "Computer Won!!"
-exit
+tieGame
+userTurn
 }
+
 
 function computerWinCheck(){
+block=0
 for ((i=0;i<ROWS;i++))
 do
 	for ((j=0;j<COLUMNS;j++))
@@ -185,79 +173,61 @@ do
 		then 
  			board[$i,$j]=$computer
 			block=1
-			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $computer ]]
 		then 
  			board[$i,$(($j+1))]=$computer
 			block=1
-			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$i,$(($j+1))]} == $computer && ${board[$i,$(($j+2))]} == "-" ]]
 		then 
  			board[$i,$(($j+2))]=$computer
 			block=1
-			break
 		fi
 #------Vertical-----
 		if [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == $computer ]]
 		then
 			board[$j,$i]=$computer
 			block=1
-			break
 		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $computer ]]
 		then 
 			board[$(($j+1)),$i]=$computer
 			block=1
-			break
 		elif [[ ${board[$j,$i]} == $computer && ${board[$(($j+1)),$i]} == $computer && ${board[$(($j+2)),$i]} == "-" ]]
 		then 
 			board[$(($j+2)),$i]=$computer
 			block=1
-			break
-		fi
 #-----1st--diagonal----
-		if [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
+		elif [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
 		then 
 			board[$i,$j]=$computer
 			block=1
-			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $computer ]]
 		then 
 			board[$(($i+1)),$(($j+1))]=$computer
 			block=1
-			break
 		elif [[ ${board[$i,$j]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
 		then 
 			board[$(($i+2)),$(($j+2))]=$computer
 			block=1
-			break
-		fi
 #--------2nd diagonal---
-		if [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == $computer ]]
+		elif [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == $computer ]]
 		then 
 			board[$i,$(($j+2))]=$computer
 			block=1
-			break
 		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $computer ]]
 		then 
 			board[$(($i+1)),$(($j+1))]=$computer
 			block=1
-			break
 		elif [[ ${board[$i,$(($j+2))]} == $computer && ${board[$(($i+1)),$(($j+1))]} == $computer && ${board[$(($i+2)),$j]} == "-" ]]
 		then 
 			board[$(($i+2)),$j]=$computer
 			block=1
-			break
 		fi
 	done
-if [ $block -eq 1 ]
-then 
-break
-fi
 done
-checkWin
 if [ $block -eq 1 ]
 then
-win
+	displayBoard
+	checkWin
 fi
 }
 
@@ -270,77 +240,57 @@ do
 		if [[ ${board[$i,$j]} == "-" && ${board[$i,$(($j+1))]} == $player && ${board[$i,$(($j+2))]} == $player ]]
 		then 
 			board[$i,$j]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$i,$j]} == $player && ${board[$i,$(($j+1))]} == "-" && ${board[$i,$(($j+2))]} == $player ]]
 		then 
 			board[$i,$(($j+1))]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$i,$j]} == $player && ${board[$i,$(($j+1))]} == $player && ${board[$i,$(($j+2))]} == "-" ]]
 		then 
 			board[$i,$(($j+2))]=$computer
-			block=2
-			break
-		fi
+			block=1
 #------Vertical-----
-		if [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $player && ${board[$(($j+2)),$i]} == $player ]]
+		elif [[ ${board[$j,$i]} == "-" && ${board[$(($j+1)),$i]} == $player && ${board[$(($j+2)),$i]} == $player ]]
 		then
 			board[$j,$i]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$j,$i]} == $player && ${board[$(($j+1)),$i]} == "-" && ${board[$(($j+2)),$i]} == $player ]]
 		then 
 			board[$(($j+1)),$i]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$j,$i]} == $player && ${board[$(($j+1)),$i]} == $player && ${board[$(($j+2)),$i]} == "-" ]]
 		then 
 			board[$(($j+2)),$i]=$computer
-			block=2
-			break
-		fi
+			block=1
 #-----1st--diagonal----
-		if [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$(($j+2))]} == $player ]]
+		elif [[ ${board[$i,$j]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$(($j+2))]} == $player ]]
 		then 
 			board[$i,$j]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$i,$j]} == $player && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$(($j+2))]} == $player ]]
 		then 
 			board[$(($i+1)),$(($j+1))]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$i,$j]} == $player && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$(($j+2))]} == "-" ]]
 		then 
 			board[$(($i+2)),$(($j+2))]=$computer
-			block=2
-			break
-		fi
+			block=1
 #--------2nd diagonal---
-		if [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$j]} == $player ]]
+		elif [[ ${board[$i,$(($j+2))]} == "-" && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$j]} == $player ]]
 		then 
 			board[$i,$(($j+2))]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$i,$(($j+2))]} == $player && ${board[$(($i+1)),$(($j+1))]} == "-" && ${board[$(($i+2)),$j]} == $player ]]
 		then 
 			board[$(($i+1)),$(($j+1))]=$computer
-			block=2
-			break
+			block=1
 		elif [[ ${board[$i,$(($j+2))]} == $player && ${board[$(($i+1)),$(($j+1))]} == $player && ${board[$(($i+2)),$j]} == "-" ]]
 		then 
 			board[$(($i+2)),$j]=$computer
-			block=2
-			break
+			block=1
 		fi
 	done
-if [ $block -eq 2 ]
-then 
-break
-fi
 done
-checkWin
 }
 
 
