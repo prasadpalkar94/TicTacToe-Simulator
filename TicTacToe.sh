@@ -142,7 +142,14 @@ computerWinCheck
 if [[ $block -eq 0  ]]
 then
 computerBlockCheck
+fi
+if [[ $block -eq 0  ]]
+then
 forCorners
+fi
+if [[ $block -eq 0  ]]
+then
+forCenter
 fi
 if [[ $block -eq 0 ]]
 then
@@ -310,6 +317,15 @@ block=0
 	done
 }
 
+function forCenter(){
+block=0
+	if [[ ${board[1,1]} == "-" ]]
+	then
+		board[1,1]=$computer
+	else
+		block=1
+	fi
+}
 
 assignSymbol
 resetBoard
