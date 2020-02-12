@@ -123,35 +123,38 @@ function userTurn(){
 		if [[ ${board[$row,$column]} == "-" ]]
 		then
 			board[$row,$column]=$player
-			((movecount++))
 			echo $movecount
-			displayBoard
 			checkWin
-			flag=0
-			computerTurn
 		else
 			echo "Position Occupied Or Invalid Position For User!!"
-			tieGame
 			userTurn
 		fi
+((movecount++))
+displayBoard
+tieGame
+computerTurn
 }
 
 function computerTurn(){
 #checkWin
 computerWinCheck
-if [[ $block -eq 0  ]]
+if [ $block -eq 0  ]
 then
 computerBlockCheck
 fi
-if [[ $block -eq 0  ]]
+if [ $block -eq 0 ]
 then
 forCorners
 fi
-if [[ $block -eq 0  ]]
+if [ $block -eq 0 ]
 then
 forCenter
 fi
-if [[ $block -eq 0 ]]
+if [ $block -eq 0 ]
+then
+forSides
+fi
+if [ $block -eq 0 ]
 then
 	row=$((RANDOM%3))
 	column=$((RANDOM%3))
@@ -297,12 +300,15 @@ do
 			board[$(($i+2)),$j]=$computer
 			block=1
 		fi
+		if [ $block -eq 1 ]
+		then
+			return
+		fi
 	done
 done
 }
 
 function forCorners(){
-block=0
 	for (( i=0; i<$ROWS; i=$(($i+2)) ))
 	do
 		for (( j=0; j<$COLUMNS; j=$(($j+2)) ))
@@ -311,27 +317,51 @@ block=0
 			then
 				board[$i,$j]=$computer
 				block=1
-			return
+				return
 			fi
 		done
 	done
 }
 
 function forCenter(){
-block=0
 	if [[ ${board[1,1]} == "-" ]]
 	then
 		board[1,1]=$computer
-	else
 		block=1
 	fi
 }
+
+function forSides(){
+	for (( i=0; i<$(($ROWS-1)); i++ ))
+	do
+		for (( j=0; j<$(($COLUMNS-1)); j++ ))
+		do
+			if [ $(($i%2)) -eq 0 ]
+			then
+				if [[ ${board[$i,$(($i+1))]} == "-" ]]
+				then
+					board[$i,$(($i+1))]=$computer
+					block=1
+					return
+				fi
+			else
+				if [[ ${board[$(($i+1)),$i]} == "-" ]]
+				then
+					board[$(($i+1)),$i]=$computer
+					block=1
+					return
+				fi
+			fi
+	done
+done
+}
+
 
 assignSymbol
 resetBoard
 while [[ $movecount -ne $TOTALCOUNT ]]
 do
-	computerTurn
+	userTurn
 done
 
 
